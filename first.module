@@ -1,0 +1,187 @@
+<?php
+  // $Id$
+  /**
+  * @file
+  * A module exemplifying Drupal coding practices and APIs.
+  *
+  * This module provides a block that lists all of the
+  * installed modules. It illustrates coding standards,
+  * practices, and API use for Drupal 7.
+  */
+  /**
+  * Implements hook_help().
+  */
+  function first_help($path, $arg) {
+     // print_r($path); 
+      //echo '<pre>';print_r($arg[1]);
+  if ($path == 'admin/help#first') {
+  return t('A demonstration module.');
+   }
+  }
+  
+  
+ /*
+  function second_help($path, $arg) {
+      switch($case) {
+          case 'admin/help#first': {
+              $ret_val= '<h3>' .t(About) . '</h3>';
+              $ret_val .= '<p>' .t(testingmi) .'</p>';
+              return $ret_val;
+      }
+  }
+  }
+  
+  */
+  /**
+   * hook_permission().
+   */
+  function first_permission() {
+      return array (
+          'Administrator first module' => array (
+           'title' => t('Adminisrator first module'),
+              'description' => t('perform administrator task on first module'),
+          
+      )
+          );
+  }
+/**
+ * implements hook_menu
+ */
+  function first_menu () {
+      $items = array();
+      $items['admin/config/first'] =  array (
+          'title' => 'first module',
+          'description' => 'Administer first settings',
+          'access arguments' => array('administer first '),          
+      );
+      $items['admin/config/first/manage'] = array(
+          'title' => 'first module settings',
+          'description' => 'manage first module settings and configuration',
+          'access arguments' => array('administer first '),
+          'page callback' => 'drupal_get_form',
+          'page arguments' => array('first_admin_setting_form'),
+      );
+      return $items;
+  }
+  /**
+   * implements hook_form().
+   */
+  function first_admin_setting_form($node, &$form_state) {
+      $form = array();
+      $form['overview'] = array(
+        '#markup' => t('Interface for setting for first module'),
+          '#prefix' => '<h4>',
+          '#suffix' => '</h4>',
+        );
+      
+      $form['first_gmap'] = array(
+        '#title' => t('Enable google map'),
+          '#Description' => t('enabled google map'),
+          '#type' => 'checbox',
+          '#defalut_value' => 1,
+        );
+      
+      $form['default_centre'] = array(
+        '#title' => t('Map center'),
+          '#Description' => t('First field'),
+          '#type' => 'fieldset',
+          '#collapsible' => TRUE,
+          '#collapsed' => FALSE,
+        );
+      $form['default_centre']['first_default_centre_lat'] = array(
+        '#title' => t('interface for setting for first module'),
+          '#Description' => t('First field'),
+          '#type' => 'textfield',
+          '#required' => TRUE,
+          '#default_value' => variable_get('first_default_centre_lat'),
+        );
+      $form['third_field']['fourth_field'] = array(
+        '#title' => t('interface for setting for first module'),
+          '#Description' => 'First field',
+          '#type' => 'textfield',
+          '#collapsible' => TRUE,
+          '#required' =>TRUE
+        );
+            $options = range(1, 20, 1);
+            $options[0] = t('0');
+            $options[20] = t('20');
+
+      $form['third_field']['fifth_field'] = array(
+        '#title' => t('interface for setting for first module'),
+          '#Description' => t('First field'),
+          '#type' => 'select',
+          '#options' => $options,
+          
+        );
+      $form['third_field']['sixth_field'] = array(
+        '#title' => t('interface for setting for first module'),
+          '#Description' => 'First field',
+          '#type' => 'select',
+          '#options' => $options,
+          
+        );
+      
+      $form['submit'] = array(
+          '#type' => 'submit',
+          '#value' => 'save',
+      );          
+      
+      
+      
+      return system_settings_form($form);
+      
+  }
+  /**
+   * Validate the custom form
+   * @param type $form
+   * @param type $form_state
+   */
+  /*
+   function  first_admin_setting_form_validate($form, &$form_state) {
+   
+          dpm($form_state['values']);
+          $a = -75.569851;
+          $b = $form_state['values']['first_default_centre_lat'];
+          if (!preg_match($a, $b)) {
+              form_set_error('first_default_centre_lat', t('invalid identifier'));
+          }
+          
+      }
+   * /
+   */
+      /**
+       * Submission for a custom form in drupal
+       */
+      function first_admin_setting_form_submit($form, &$form_state) {
+          $form_state['rebuild'] = TRUE;
+          variable_set('first_default_centre_lat', $form_state['values']['first_default_centre_lat']);
+          drupal_set_message(t('input hass been saved'));
+      }
+/**
+ * 
+ * * Implements hook_block_info().
+*/
+function first_block_info() {
+$blocks = array();
+$blocks['list_modules'] = array(
+'info' => t('A listing of all of the enabled modules.'),
+'cache' => DRUPAL_NO_CACHE,
+);
+return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function first_block_view($block_name = '') {
+if ($block_name == 'list_modules') {
+$list = module_list();
+$theme_args = array('items' => $list, 'type' => 'ol');
+$content = theme('item_list', $theme_args);
+$block = array(
+'subject' => t('Enabled Modules'),
+'content' => $content,
+    );
+return $block;
+}
+}

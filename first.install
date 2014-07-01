@@ -1,0 +1,55 @@
+<?php
+/**
+ * Implements hook_install(). 
+ */
+function first_install() {
+    variable_set('first_default_centre_lat', -75.569851);
+    $t = get_t();
+    drupal_set_message($t('first variables created'));
+    /**
+     * content type definition
+     */
+    $content_type = array(
+        'type' => 'first',
+        'name' => $t('first'),
+        'description' => $t('a first module content type'),
+        'title_label' => $t('first name'),
+        'base' => 'node_content',
+        'custom' => TRUE,
+    );
+    $node_type = node_type_set_defaults($content_type);
+    //save the content type
+    node_type_save($node_type);
+    //add body field 
+    node_add_body_field($node_type, $t('description'));
+    //add fields
+    $fields = array();
+    $fields['first_field'] = array(
+      'field name' => 'first field1',
+        'type' => 'number_integer',
+        'cardinality' => 1,
+        'settings' => array(
+            'max_length' => 5,
+        )
+    );
+    $fields['second_field'] = array(
+      'field name' => 'Second field1',
+        'type' => 'number_float',
+        'cardinality' => 1,
+        'settings' => array(
+            'max_length' => 5,
+        )
+        );
+        foreach ($fields as $field) {
+            field_create_field($field);
+        }
+    
+}
+/**
+ * implements hook_uninstall
+ */
+function first_uninstall() {
+    variable_del('first_default_centre_lat');
+    $t = get_t();
+    drupal_set_message($t('first variables deletedd'));
+}
